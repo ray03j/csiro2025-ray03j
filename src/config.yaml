@@ -1,0 +1,80 @@
+task:  # task specific config
+  img_size: 224
+  img_depth: 16
+  fixed_depth: 16
+  slice_depth: 3
+  pretrain: false
+
+model:
+  freeze_end_epoch: 0
+  arch: timm_encoder # モデルのアーキテクチャ (simple_2_5d_model, 2.5D U-Net)
+  in_channels: 3   # 入力チャンネル数 (例: グレースケール画像)
+  out_channels: 1  # 出力クラス数 (例: セグメンテーションクラス)
+  depth: 4         # U-Netのエンコーダ/デコーダの深さ
+  base_filters: 64 # 初期フィルター数 (各層で倍増)
+  dropout: 0.0     # ドロップアウト率
+  use_batchnorm: true # BatchNormの使用
+  activation: "relu" # 活性化関数 (例: relu, leaky_relu, etc.)
+  
+  swa: false
+  freeze_backbone: false
+  backbone: vit_base_patch16_dinov3_qkvb
+  
+  ema: false
+  resume_path: None
+  drop_path_rate: 0.0
+  
+  img_size: 224
+  img_depth: 16
+  kernel_size: 5
+  class_num: 5
+  
+data:
+  fold_num: 5
+  fold_id: 0
+  num_workers: 8
+  batch_size: 16
+  # train_all: チェックポイントの保存タイミングtrainのあと or valのあと
+  #            falseでtrain/valに分割、trueで全データを学習に使用？
+  train_all: false
+  input_dir: null # /kaggle/input/byu-base0526-1
+  output_dir: null # /kaggle/working/output
+  val_output_dir: null # /kaggle/working/val
+
+trainer:
+  max_epochs: 5
+  devices: "auto"  # list or str, -1 to indicate all available devices
+  strategy: "auto"  # ddp
+  check_val_every_n_epoch: 5
+  sync_batchnorm: false
+  accelerator: "gpu"  # cpu, gpu, tpu, ipu, hpu, mps, auto
+  precision: 32  # 16, 32, 64, bf16
+  gradient_clip_val: null
+  accumulate_grad_batches: 1
+  deterministic: true
+  
+test:
+  mode: test  # test or val
+  output_dir: preds_results
+  
+opt:
+  opt: "AdamW"  # SGD, Adam, AdamW...
+  lr: 1e-3
+  weight_decay: 0.01
+
+scheduler:
+  sched: "cosine"
+  min_lr: 0.0
+  warmup_epochs: 0
+
+loss:
+  mixup: 0.0
+  cutmix: 0.0
+
+metric: 
+  r2_weights: [0.1, 0.1, 0.1, 0.2, 0.5]
+
+wandb:
+  project: csiro2025
+  name: "exp_0"
+  fast_dev_run: false

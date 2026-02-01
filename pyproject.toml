@@ -1,0 +1,44 @@
+[project]
+name = "csiro-biomass"
+version = "0.1.0"
+description = "CSIRO Biomass Competition"
+requires-python = ">=3.9,<3.11"
+dependencies = [
+    "tqdm",
+    "numpy",
+    "pandas",
+    "opencv-python",
+    "scikit-learn",
+    "pytorch-lightning",
+    "omegaconf",
+    "wandb",
+    "jupyter",
+    "matplotlib",
+    "pydantic",
+    "timm",
+    "albumentations",
+    "librosa",
+    "pyarrow",
+    "einops",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "torchaudio>=2.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+# PyTorchはCUDA版を使用
+index = [
+    { name = "pytorch-cu121", url = "https://download.pytorch.org/whl/cu121", explicit = true }
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu121" }
+torchvision = { index = "pytorch-cu121" }
+torchaudio = { index = "pytorch-cu121" }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
